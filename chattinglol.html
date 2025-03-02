@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Chat App</title>
+    <style>
+        /* Basic Styling */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Loading screen styling */
+        #loadingScreen {
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        /* Password Screen */
+        #passwordScreen {
+            display: none;
+            text-align: center;
+        }
+
+        #passwordInput {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        #submitPassword {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Location Tracker */
+        #locationTracker {
+            display: none;
+            text-align: center;
+        }
+
+        #earth {
+            width: 200px;
+            height: auto;
+        }
+
+        #locationText {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        /* Chat Box */
+        #chatBox {
+            display: none;
+            width: 300px;
+            height: 400px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            flex-direction: column;
+        }
+
+        #messageHistory {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        #messageInput {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <h1>Loading...</h1>
+    </div>
+
+    <!-- Password Input Screen -->
+    <div id="passwordScreen">
+        <input type="password" id="passwordInput" placeholder="Enter Password" />
+        <button id="submitPassword" onclick="checkPassword()">Submit</button>
+    </div>
+
+    <!-- Fake Location Tracker -->
+    <div id="locationTracker">
+        <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png" alt="Tracking" id="earth" />
+        <p id="locationText">Tracking Location...</p>
+    </div>
+
+    <!-- Chat Box -->
+    <div id="chatBox">
+        <div id="messageHistory"></div>
+        <input type="text" id="messageInput" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        // Correct password
+        const correctPassword = "672389";
+
+        // Store messages
+        let messageHistory = [];
+        let userNickname = "User" + Math.floor(Math.random() * 1000);
+
+        // Load the loading screen for 15 seconds
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('passwordScreen').style.display = 'block';
+            }, 15000); // 15 seconds
+        };
+
+        // Check the entered password
+        function checkPassword() {
+            const enteredPassword = document.getElementById('passwordInput').value;
+            if (enteredPassword === correctPassword) {
+                // Start fake location tracking if password is correct
+                startLocationTracker();
+            } else {
+                // Incorrect password: Show message and close the tab
+                alert("HAH! You thought. l o s e r.");
+                window.close();
+            }
+        }
+
+        // Start the fake location tracking
+        function startLocationTracker() {
+            document.getElementById('passwordScreen').style.display = 'none';  // Hide password input
+            document.getElementById('locationTracker').style.display = 'block';  // Show location tracker
+
+            // Randomly pick a location
+            const locations = ["New York", "Tokyo", "Paris", "London", "Sydney"];
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+
+            setTimeout(function() {
+                document.getElementById('locationText').innerText = `Tracking Location: ${randomLocation}`;
+            }, 2000);
+
+            setTimeout(function() {
+                document.getElementById('locationTracker').style.display = 'none';  // Hide location tracker
+                document.getElementById('chatBox').style.display = 'block';  // Show chat box
+            }, 7000); // After 7 seconds, show the chat box
+        }
+
+        // Send a message to the chat box
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (message) {
+                messageHistory.push({ nickname: userNickname, message });
+                if (messageHistory.length > 20) messageHistory.shift(); // Keep the last 20 messages
+                updateMessageHistory();
+                messageInput.value = ''; // Clear the input
+            }
+        }
+
+        // Update the message history
+        function updateMessageHistory() {
+            const messageHistoryDiv = document.getElementById('messageHistory');
+            messageHistoryDiv.innerHTML = ''; // Clear current messages
+
+            messageHistory.forEach(entry => {
+                const messageElement = document.createElement('div');
+                messageElement.innerText = `${entry.nickname}: ${entry.message}`;
+                messageHistoryDiv.appendChild(messageElement);
+            });
+        }
+    </script>
+</body>
+</html>
